@@ -1,0 +1,2 @@
+# sequelizeEx
+sequelize example
