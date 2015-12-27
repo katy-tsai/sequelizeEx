@@ -31,21 +31,24 @@ var Users = db.define('users',{
      },
      createOrUpdate:function(onSuccess,onError){
        var entity = this.get();
+       var user = this;
        console.log(entity);
-      // Users.upsert(entity,{id:entity.id}).then(onSuccess).catch(onError);
-       Users.findOne({where:entity},{raw:true}).then(onSuccess).catch(onError);
-      //  Users.upsert(entity,{id:entity.id}).then(function(){
-      //    Users.find({where:entity},{raw:true}).then(onSuccess).catch(onError);
-      //  }).catch(onError);
+       if(entity.id!=null){
+         Users.update(entity,{where:{id:entity.id}}).then(function(){
+           return Users.findById(entity.id);
+         }).then(onSuccess).catch(onError);
+       }else{
+         return Users.create(entity).then(onSuccess).catch(onError);
+       }
 
      }
 
    }
 });
 // Users.sync();
-var user = Users.build({ username: "caty", password: "admin" });
+var user = Users.build({id:1, username: "caty", password: "admin" });
 user.createOrUpdate(function(user){
-  console.log(user);
+  console.log(user.get());
 },function(err){
   console.log(err);
 })
